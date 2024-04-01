@@ -2,16 +2,20 @@
 import { Link, useNavigate } from 'react-router-dom'; // Import des modules nécessaires depuis react-router-dom
 import { Alert, Label, Spinner, TextInput, Button } from 'flowbite-react'; // Import des composants nécessaires depuis flowbite-react
 import { useState } from 'react'; // Import de la fonction useState depuis React
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  signInStart,
+  signInSuccess,
+  signInFailure,
+} from '../redux/user/userSlice';
 
 export default function SingIn() {
 
  // Déclaration des états du formulaire et des messages d'erreur
  const [formData, setFormData] = useState({}); // État du formulaire pour stocker les données des champs
- const [errorMessage, setErrorMessage] = useState(null); // État pour stocker les messages d'erreur
- const [loading, setLoading] = useState(false); // État pour gérer l'état de chargement lors de la soumission du formulaire
-
- // Utilisation du hook useNavigate pour la navigation
+ const { loading, error: errorMessage } = useSelector((state) => state.user);
  const navigate = useNavigate();
+ const dispatch = useDispatch();
 
  // Fonction pour gérer le changement dans les champs du formulaire
  const handleChange = async (e) => {
@@ -24,12 +28,11 @@ export default function SingIn() {
 
    // Vérification de la saisie des champs obligatoires
    if (!formData.email || !formData.password) {
-     return setErrorMessage('Please fill out all fields.'); // Affichage d'un message d'erreur si tous les champs ne sont pas remplis
+    return dispatch(signInFailure('Please fill all the fields'));
    }
 
    try {
-     setLoading(true); // Active l'état de chargement
-     setErrorMessage(null); // Réinitialise les messages d'erreur
+    dispatch(signInStart());
      const res = await fetch('/api/auth/signin', { // Appel à l'API pour s'inscrire
        method: 'POST',
        headers: { 'Content-Type': 'application/json' },
@@ -38,16 +41,15 @@ export default function SingIn() {
      const data = await res.json(); // Conversion de la réponse en JSON
 
      if (data.success === false) { // Vérification si l'inscription a échoué
-       return setErrorMessage(data.message); // Affichage du message d'erreur renvoyé par l'API
+      dispatch(signInFailure(data.message));
      }
-
-     setLoading(false); // Désactive l'état de chargement
      if (res.ok) { // Vérification si la réponse est OK
+      dispatch(signInFailure(data.message));
        navigate('/'); // Redirection vers la page de connexion
      }
    } catch (error) {
-     setErrorMessage(error.message); // Affichage du message d'erreur en cas d'erreur de requête
-     setLoading(false); // Désactive l'état de chargement
+
+    dispatch(signInFailure(error.message));
    }
  };
 
