@@ -44,7 +44,7 @@ export default function SingIn() {
       dispatch(signInFailure(data.message));
      }
      if (res.ok) { // Vérification si la réponse est OK
-      dispatch(signInFailure(data.message));
+      dispatch(signInSuccess(data));
        navigate('/'); // Redirection vers la page de connexion
      }
    } catch (error) {
@@ -60,7 +60,7 @@ export default function SingIn() {
         <div className='flex-1'>
           <Link to='/' className='font-bold dark:text-white text-4xl'>
             <span className='px-2 py-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-lg text-white'>
-              3AIL
+              ISTAMA
             </span>
             Blog
           </Link>
