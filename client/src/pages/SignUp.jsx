@@ -1,6 +1,8 @@
 import { Link, useNavigate } from 'react-router-dom'; // Import des modules nécessaires depuis react-router-dom
 import { Alert, Label, Spinner, TextInput, Button } from 'flowbite-react'; // Import des composants nécessaires depuis flowbite-react
 import { useState } from 'react'; // Import de la fonction useState depuis React
+import OAuth from '../components/OAuth';
+
 
 export default function SignUp() {
   // Déclaration des états du formulaire et des messages d'erreur
@@ -111,6 +113,7 @@ export default function SignUp() {
                 'Sign Up'
               )}
             </Button>
+            <OAuth />
           </form>
           {/* Lien vers la page de connexion */}
           <div className='flex gap-2 text-sm mt-5'>

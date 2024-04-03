@@ -90,3 +90,64 @@ export const signin = async (req, res, next) => {
     next(error);
   }
 };
+
+// Définition d'une fonction nommée google qui gère l'authentification via Google
+export const google = async (req, res, next) => {
+  // Extraction de l'e-mail, du nom et de l'URL de la photo de profil Google à partir du corps de la requête
+  const { email, name, googlePhotoUrl } = req.body;
+  try {
+    // Recherche d'un utilisateur avec l'e-mail fourni dans la base de données
+    const user = await User.findOne({ email });
+    // Si un utilisateur est trouvé avec l'e-mail fourni
+    if (user) {
+      // Génération d'un jeton JSON avec l'identifiant de l'utilisateur et le statut isAdmin, signé avec la variable d'environnement JWT_SECRET
+      const token = jwt.sign(
+        { id: user._id, isAdmin: user.isAdmin },
+        process.env.JWT_SECRET
+      );
+      // Destructuration du champ mot de passe du document utilisateur
+      const { password, ...rest } = user._doc;
+      // Envoi d'une réponse avec un code d'état 200, définition d'un cookie nommé 'access_token' avec le jeton généré, et envoi des données utilisateur restantes en tant que réponse JSON
+      res
+        .status(200)
+        .cookie('access_token', token, {
+          httpOnly: true,
+        })
+        .json(rest);
+    } else {
+      // Si aucun utilisateur n'est trouvé avec l'e-mail fourni, créer un nouvel utilisateur
+      const generatedPassword =
+        Math.random().toString(36).slice(-8) +
+        Math.random().toString(36).slice(-8);
+      const hashedPassword = bcryptjs.hashSync(generatedPassword, 10);
+      const newUser = new User({
+        // Générer un nom d'utilisateur unique basé sur le nom fourni et des caractères aléatoires
+        username:
+          name.toLowerCase().split(' ').join('') +
+          Math.random().toString(9).slice(-4),
+        email,
+        password: hashedPassword,
+        profilePicture: googlePhotoUrl,
+      });
+      // Enregistrer le nouvel utilisateur dans la base de données
+      await newUser.save();
+      // Génération d'un jeton JSON avec l'identifiant du nouvel utilisateur et le statut isAdmin, signé avec la variable d'environnement JWT_SECRET
+      const token = jwt.sign(
+        { id: newUser._id, isAdmin: newUser.isAdmin },
+        process.env.JWT_SECRET
+      );
+      // Destructuration du champ mot de passe du document nouvel utilisateur
+      const { password, ...rest } = newUser._doc;
+      // Envoi d'une réponse avec un code d'état 200, définition d'un cookie nommé 'access_token' avec le jeton généré, et envoi des données utilisateur restantes en tant que réponse JSON
+      res
+        .status(200)
+        .cookie('access_token', token, {
+          httpOnly: true,
+        })
+        .json(rest);
+    }
+  } catch (error) {
+    // Si une erreur se produit lors du processus d'authentification Google, passage de l'erreur à la prochaine fonction middleware
+    next(error);
+  }
+};

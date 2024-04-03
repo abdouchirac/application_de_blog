@@ -3,6 +3,8 @@ import { Link, useNavigate } from 'react-router-dom'; // Import des modules néc
 import { Alert, Label, Spinner, TextInput, Button } from 'flowbite-react'; // Import des composants nécessaires depuis flowbite-react
 import { useState } from 'react'; // Import de la fonction useState depuis React
 import { useDispatch, useSelector } from 'react-redux';
+import OAuth from '../components/OAuth';
+
 import {
   signInStart,
   signInSuccess,
@@ -106,6 +108,7 @@ export default function SingIn() {
                 'Sign in'
               )}
             </Button>
+            <OAuth />
           </form>
           {/* Lien vers la page de connexion */}
           <div className='flex gap-2 text-sm mt-5'>
