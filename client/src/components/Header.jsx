@@ -1,15 +1,15 @@
 //import React from 'react'
 
-import { Avatar, Navbar, Button, Dropdown,TextInput } from 'flowbite-react';
+import { Avatar, Button, Dropdown, Navbar, TextInput } from 'flowbite-react';
 import { Link, useLocation} from 'react-router-dom'
 import { AiOutlineSearch } from 'react-icons/ai';
+import { useSelector} from 'react-redux';
 import { FaMoon } from 'react-icons/fa';
-import { useSelector } from 'react-redux';
 
 
 export default function Header() {
-  const { currentUser } = useSelector((state) => state.user);
   const path = useLocation().pathname;
+  const { currentUser } = useSelector((state) => state.user);
   return (
     <Navbar className='border-b-2'>
       <Link to="/" className='self-center whitespace-nowrap text-sm sm:text-xl font-semibold dark:text-white '>
@@ -53,10 +53,10 @@ export default function Header() {
               <Dropdown.Item>Profile</Dropdown.Item>
             </Link>
             <Dropdown.Divider />
-            <Dropdown.Item>Sign out</Dropdown.Item>
+            <Dropdown.Item >Sign out</Dropdown.Item>
           </Dropdown>
         ) : (
-          <Link to='/sign-in'>
+          <Link to='/sigin-in'>
             <Button gradientDuoTone='purpleToBlue' outline>
               Sign In
             </Button>
