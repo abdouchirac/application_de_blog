@@ -2,7 +2,7 @@
 import { useSelector } from 'react-redux'; // Import de la fonction useSelector permettant d'accéder à l'état du magasin Redux
 import { Outlet, Navigate } from 'react-router-dom'; // Import des composants Outlet et Navigate de React Router
 
-// Définition du composant PrivateRoute
+// Définition du composant PrivateRoutei
 export default function PrivateRoute() {
   // Utilisation de useSelector pour extraire la propriété currentUser de l'état global Redux
   const { currentUser } = useSelector((state) => state.user);
