@@ -11,6 +11,8 @@ import authRoutes from './routes/auth.route.js';
 
 import cookieParser from 'cookie-parser';
 
+import path from 'path';
+
 // Chargement des variables d'environnement à partir du fichier .env
 dotenv.config();
 // Connexion à la base de données MongoDB en utilisant l'URL spécifiée dans la variable d'environnement MONGO
@@ -20,6 +22,8 @@ mongoose.connect(process.env.MONGO).then(() => {
 .catch((err) => {
   console.log(err);
 });
+
+const __dirname = path.resolve();
 
 // Création d'une instance de l'application Express
 const app = express();
@@ -39,6 +43,11 @@ app.use('/api/user', userRoutes);
 // Utilisation des routes d'authentification sous le préfixe '/api/auth'
 app.use('/api/auth', authRoutes);
 
+app.use(express.static(path.join(__dirname, '/client/dist')));
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'client', 'dist', 'index.html'));
+});
 // Middleware de gestion des erreurs : intercepte les erreurs survenues dans les routes précédentes
 app.use((err, req, res, next) => {
   // Extraction du code d'état de l'erreur ou définition par défaut à 500
